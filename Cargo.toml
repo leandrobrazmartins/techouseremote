@@ -1,12 +1,12 @@
 [package]
-name = "TechouseRemote"
-version = "1.0.0"
+name = "rustdesk"
+version = "1.4.9"
 authors = ["Techouse <leandrobrazmartins@gmail.com>"]
-edition = "2026"
+edition = "2021"
 build= "build.rs"
-description = "Techouse Suporte Remoto"
-default-run = "TechouseRemote"
-rust-version = "1.00"
+description = "TechouseRemote - Suporte Remoto"
+default-run = "rustdesk"
+rust-version = "1.75"
 
 [lib]
 name = "librustdesk"
