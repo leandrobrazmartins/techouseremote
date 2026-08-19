@@ -5,16 +5,12 @@ authors = ["Techouse <leandrobrazmartins@gmail.com>"]
 edition = "2021"
 build= "build.rs"
 description = "TechouseRemote - Suporte Remoto"
-default-run = "TechouseRemote"
+default-run = "rustdesk"
 rust-version = "1.75"
 
 [lib]
 name = "librustdesk"
 crate-type = ["cdylib", "staticlib", "rlib"]
-
-[[bin]]
-name = "TechouseRemote"
-path = "src/main.rs"
 
 [[bin]]
 name = "naming"
