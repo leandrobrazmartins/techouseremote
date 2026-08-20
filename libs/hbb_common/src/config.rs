@@ -115,7 +115,7 @@ const CHARS: &[char] = &[
 ];
 
 pub const RENDEZVOUS_SERVERS: &[&str] = &["techouseremote.techouseinformatica.com.br"];
-pub const RS_PUB_KEY: &str = "J5fTg0DVp3ilLvxRPKRH2j4J+ERsk+XHSjLogj0GuIU";
+pub const RS_PUB_KEY: &str = "J5fTg0DVp3ilLvxRPKRH2j4J+ERsk+XHSjLogj0GuIU=";
 
 pub const RENDEZVOUS_PORT: i32 = 21116;
 pub const RELAY_PORT: i32 = 21117;

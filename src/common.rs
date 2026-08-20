@@ -3098,4 +3098,11 @@ mod tests {
         assert_eq!(combined_mask & MOUSE_TYPE_MASK, MOUSE_TYPE_DOWN);
         assert_eq!(combined_mask >> 3, MOUSE_BUTTON_LEFT | MOUSE_BUTTON_RIGHT);
     }
+
+    #[test]
+    fn test_decode_user_key() {
+        let key = "J5fTg0DVp3ilLvxRPKRH2j4J+ERsk+XHSjLogj0GuIU=";
+        let res = super::get_rs_pk(key);
+        assert!(res.is_some(), "Key decoding failed for J5fTg0DVp3ilLvxRPKRH2j4J+ERsk+XHSjLogj0GuIU=");
+    }
 }
