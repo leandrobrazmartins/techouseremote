@@ -59,15 +59,18 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget build(BuildContext context) {
     super.build(context);
     final isIncomingOnly = bind.isIncomingOnly();
-    return _buildBlock(
-        child: Row(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        buildLeftPane(context),
-        if (!isIncomingOnly) const VerticalDivider(width: 1),
-        if (!isIncomingOnly) Expanded(child: buildRightPane(context)),
-      ],
-    ));
+    return Obx(() {
+      final showIncomingOnly = isIncomingOnly || gFFI.userModel.userName.isEmpty;
+      return _buildBlock(
+          child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          buildLeftPane(context),
+          if (!showIncomingOnly) const VerticalDivider(width: 1),
+          if (!showIncomingOnly) Expanded(child: buildRightPane(context)),
+        ],
+      ));
+    });
   }
 
   Widget _buildBlock({required Widget child}) {
@@ -78,6 +81,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
   Widget buildLeftPane(BuildContext context) {
     final isIncomingOnly = bind.isIncomingOnly();
     final isOutgoingOnly = bind.isOutgoingOnly();
+    final showIncomingOnly = isIncomingOnly || gFFI.userModel.userName.isEmpty;
     final children = <Widget>[
       if (!isOutgoingOnly) buildPresetPasswordWarning(),
       if (bind.isCustomClient())
@@ -97,7 +101,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
             Obx(() => buildHelpCards(stateGlobal.updateUrl.value))),
         builder: (_, data) {
           if (data.hasData) {
-            if (isIncomingOnly) {
+            if (showIncomingOnly) {
               if (isInHomePage()) {
                 Future.delayed(Duration(milliseconds: 300), () {
                   _updateWindowSize();
@@ -111,7 +115,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         },
       ),
     ];
-    if (isIncomingOnly) {
+    if (showIncomingOnly) {
       children.addAll([
         Divider(),
         OnlineStatusWidget(
@@ -129,7 +133,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return ChangeNotifierProvider.value(
       value: gFFI.serverModel,
       child: Container(
-        width: isIncomingOnly ? 280.0 : 200.0,
+        width: showIncomingOnly ? 280.0 : 200.0,
         color: Theme.of(context).colorScheme.background,
         child: Stack(
           children: [
@@ -850,11 +854,24 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     });
     _uniLinksSubscription = listenUniLinks();
 
-    if (bind.isIncomingOnly()) {
+    if (bind.isIncomingOnly() || gFFI.userModel.userName.isEmpty) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateWindowSize();
+        setResizable(false);
       });
     }
+
+    gFFI.userModel.userName.listen((userName) {
+      if (userName.isEmpty) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          _updateWindowSize();
+          setResizable(false);
+        });
+      } else {
+        windowManager.setSize(const Size(800, 600));
+        setResizable(true);
+      }
+    });
     WidgetsBinding.instance.addObserver(this);
   }
 
