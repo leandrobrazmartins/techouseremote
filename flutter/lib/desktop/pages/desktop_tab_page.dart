@@ -52,9 +52,8 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
         page: DesktopHomePage(
           key: const ValueKey(kTabLabelHomePage),
         )));
-    tabController.onSelected = (key) {
-      final isCompact = bind.isIncomingOnly() || gFFI.userModel.userName.isEmpty;
-      if (isCompact) {
+    if (bind.isIncomingOnly()) {
+      tabController.onSelected = (key) {
         if (key == kTabLabelHomePage) {
           windowManager.setSize(getIncomingOnlyHomeSize());
           setResizable(false);
@@ -62,10 +61,8 @@ class _DesktopTabPageState extends State<DesktopTabPage> {
           windowManager.setSize(getIncomingOnlySettingsSize());
           setResizable(true);
         }
-      } else {
-        setResizable(true);
-      }
-    };
+      };
+    }
   }
 
   @override

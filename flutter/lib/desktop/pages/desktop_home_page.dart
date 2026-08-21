@@ -66,8 +66,12 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           buildLeftPane(context),
-          if (!showIncomingOnly) const VerticalDivider(width: 1),
-          if (!showIncomingOnly) Expanded(child: buildRightPane(context)),
+          const VerticalDivider(width: 1),
+          Expanded(
+            child: showIncomingOnly
+                ? buildInstitutionalPane(context)
+                : buildRightPane(context),
+          ),
         ],
       ));
     });
@@ -186,6 +190,60 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     return Container(
       color: Theme.of(context).scaffoldBackgroundColor,
       child: ConnectionPage(),
+    );
+  }
+
+  Widget buildInstitutionalPane(BuildContext context) {
+    return Container(
+      color: Theme.of(context).colorScheme.background.withOpacity(0.95),
+      padding: const EdgeInsets.all(40.0),
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            const Icon(
+              Icons.shield_outlined,
+              size: 80,
+              color: borderColor,
+            ),
+            const SizedBox(height: 24),
+            Text(
+              "Techouse Remote",
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 26,
+                  ),
+            ),
+            const SizedBox(height: 12),
+            Text(
+              "Suporte Técnico Autorizado",
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: Theme.of(context).textTheme.bodyMedium?.color?.withOpacity(0.7),
+                    fontWeight: FontWeight.w500,
+                  ),
+            ),
+            const SizedBox(height: 32),
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor.withOpacity(0.5),
+                ),
+              ),
+              child: Text(
+                "Para iniciar o suporte, informe o ID e a Senha de uso único exibidos no painel esquerdo ao seu analista de suporte.\n\nSua conexão está protegida por criptografia de ponta a ponta.",
+                textAlign: TextAlign.center,
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      height: 1.5,
+                    ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -854,24 +912,32 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     });
     _uniLinksSubscription = listenUniLinks();
 
-    if (bind.isIncomingOnly() || gFFI.userModel.userName.isEmpty) {
+    if (bind.isIncomingOnly()) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         _updateWindowSize();
         setResizable(false);
       });
     }
 
-    gFFI.userModel.userName.listen((userName) {
-      if (userName.isEmpty) {
-        WidgetsBinding.instance.addPostFrameCallback((_) {
-          _updateWindowSize();
-          setResizable(false);
-        });
-      } else {
-        windowManager.setSize(const Size(800, 600));
-        setResizable(true);
+    gFFI.userModel.userName.listen((userName) async {
+      if (userName.isNotEmpty) {
+        // Ativa gravação automática de entrada e saída
+        await mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
+        await mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
+        // Define o caminho de gravação
+        final path = r'\\192.168.2.254\techouseremote\' + userName + r'\data\';
+        await bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
+        debugPrint("Gravação e pasta configuradas para o usuário: $userName");
       }
     });
+
+    final currentUserName = gFFI.userModel.userName.value;
+    if (currentUserName.isNotEmpty) {
+      mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
+      mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
+      final path = r'\\192.168.2.254\techouseremote\' + currentUserName + r'\data\';
+      bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
+    }
     WidgetsBinding.instance.addObserver(this);
   }
 
