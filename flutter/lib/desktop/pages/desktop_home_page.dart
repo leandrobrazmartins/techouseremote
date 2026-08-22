@@ -925,7 +925,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
         await mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
         await mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
         // Define o caminho de gravação
-        final path = r'\\192.168.2.254\techouseremote\' + userName + r'\data\';
+        final path = r'\\192.168.2.254\techouseremote$\' + userName + r'\';
         await bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
         debugPrint("Gravação e pasta configuradas para o usuário: $userName");
       }
@@ -935,7 +935,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     if (currentUserName.isNotEmpty) {
       mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
       mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
-      final path = r'\\192.168.2.254\techouseremote\' + currentUserName + r'\data\';
+      final path = r'\\192.168.2.254\techouseremote$\' + currentUserName + r'\';
       bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
     }
     WidgetsBinding.instance.addObserver(this);
