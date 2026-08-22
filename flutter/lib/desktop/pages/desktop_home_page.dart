@@ -923,7 +923,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
       if (userName.isNotEmpty) {
         // Ativa gravação automática de entrada e saída
         await mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
-        await mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
+        await mainSetLocalBoolOption(kOptionAllowAutoRecordOutgoing, true);
         // Define o caminho de gravação
         final path = r'\\192.168.2.254\techouseremote$\' + userName + r'\';
         await bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
@@ -934,7 +934,7 @@ class _DesktopHomePageState extends State<DesktopHomePage>
     final currentUserName = gFFI.userModel.userName.value;
     if (currentUserName.isNotEmpty) {
       mainSetBoolOption(kOptionAllowAutoRecordIncoming, true);
-      mainSetBoolOption(kOptionAllowAutoRecordOutgoing, true);
+      mainSetLocalBoolOption(kOptionAllowAutoRecordOutgoing, true);
       final path = r'\\192.168.2.254\techouseremote$\' + currentUserName + r'\';
       bind.mainSetLocalOption(key: kOptionVideoSaveDirectory, value: path);
     }
